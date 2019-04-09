@@ -13,17 +13,15 @@ char **vect(char *str, ssize_t n);
  */
 int main(int argc, char *argv[])
 {
-	char *buffer;
+	char *buffer = NULL;
 	char **array;
 	size_t bufSize = 0;
 	ssize_t charCount;
+	int index;
 
 	if (argc == 0)
 		return (-1);
 	if (argv == NULL)
-		return (-1);
-	buffer = malloc(bufSize);
-	if (buffer == NULL)
 		return (-1);
 
 	putchar('$');
@@ -32,7 +30,10 @@ int main(int argc, char *argv[])
 	if (charCount < 0)
 		return (-1);
 	array = vect(buffer, charCount);
+	printf("%s\n%s\n%s\n", array[0], array[1], array[2]);
      	free(buffer);
+	for (index = 0; array[index] != NULL; index++)
+		free(array[index]);
 	free(array);
 	return (0);
 }
@@ -42,29 +43,30 @@ char **vect(char *str, ssize_t n)
 {
 	char *buffer, *bufPointer, *token, *delim = " ";
 	char **args;
-	size_t tokenSize = 0;
-	int index;
+	size_t tokenSize = 1;
+	int argc;
 
 	buffer = malloc(n + 1);
-	bufPointer = buffer;
 	if (buffer == NULL)
 		return (NULL);
 	bufPointer = buffer;
 	strcpy(buffer, str);
-	for (index = 0; *bufPointer != '\0'; bufPointer++)
+	for (argc = 0; *bufPointer != '\0'; bufPointer++)
 	{
 		if (*bufPointer == *delim)
 			tokenSize++;
 	}
 	args = malloc(sizeof(char *) * (tokenSize + 1));
 	token = strtok(buffer, delim);
-	index = 0;
+	argc = 0;
 	while (token != NULL)
 	{
-		args[index] = malloc(strlen(token));
-		args[index] = token;
+		args[argc] = malloc(strlen(token) + 1);
+		strcpy(args[argc], token);
 		token = strtok(NULL, delim);
-		index++;
+		argc++;
 	}
+	args[argc] = NULL;
+	free(buffer);
 	return (args);
 }

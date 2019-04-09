@@ -7,4 +7,5 @@
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
+char **vect(char *str, ssize_t n);
 #endif /* _SHELL_ */
