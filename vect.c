@@ -9,10 +9,10 @@
  */
 char **vect(char *str, ssize_t n)
 {
-	char *buffer, *bufPointer, *token, *delim = " ";
+	char *buffer, *bufPointer, *token, *delim = " :=";
 	char **args;
 	size_t tokenSize = 1;
-	int argc;
+	int argc = 0, index;
 
 	buffer = malloc(n + 1);
 	if (buffer == NULL)
@@ -21,12 +21,14 @@ char **vect(char *str, ssize_t n)
 	strcpy(buffer, str);
 	for (argc = 0; *bufPointer != '\0'; bufPointer++)
 	{
-		if (*bufPointer == *delim)
-			tokenSize++;
+		for (index = 0; delim[index] != '\0'; index++)
+		{
+			if (*bufPointer == delim[index])
+				tokenSize++;
+		}
 	}
 	args = malloc(sizeof(char *) * (tokenSize + 1));
 	token = strtok(buffer, delim);
-	argc = 0;
 	while (token != NULL)
 	{
 		args[argc] = malloc(strlen(token) + 1);
