@@ -8,76 +8,86 @@
  */
 char *pathFind(char **env)
 {
-	char *path = "PATH";
+	char *path = "PATH=";
 	int index;
+
 	for (index = 0; env[index] != NULL; index++)
 	{
-		if (strncmp(env[index], path, 4) == 0)
-			return(env[index]);
+		if (strncmp(env[index], path, 5) == 0)
+			return (env[index]);
 	}
 	return (NULL);
 }
-/**
- * execPath - Makes an executable path
- * @PATH: Full path from evn
- * @cmd: The command from the command line
- *
- * Return: Pointer to full executable path
- */
+
 char *execPath(char *PATH, char *cmd)
 {
 	char **path;
-	char *buffer;
-	char *bufPointer, *cmdPointer;
-	char *command;
+	char *cmdPointer, *buffer, *command;
 	int index;
 	struct stat fileStat;
 
-	path = vect(PATH, strlen(PATH) + 1);
-	command = malloc(sizeof(cmd + 1));
-	strcpy(command, cmd);
-
-	for (index = 1; path[index] != NULL; index++)
+	if (builtins(cmd))
 	{
-		cmdPointer = command;
-		buffer = malloc(strlen(path[index]) + strlen(cmd) + 2);
-		if (buffer == NULL)
-			return (NULL);
-		for (;*cmdPointer != '\0'; cmdPointer++)
+		path = vect(PATH, strlen(PATH) + 1);
+		command = malloc(sizeof(char) * strlen(cmd) + 1);
+		strcpy(command, cmd);
+
+		for (index = 1; path[index] != NULL; index++)
 		{
-			if (*cmdPointer == '/')
+			cmdPointer = command;
+			buffer = malloc(strlen(path[index]) + strlen(cmd) + 2);
+			if (buffer == NULL)
+				return (NULL);
+			for (; *cmdPointer != '\0'; cmdPointer++)
 			{
-				free(buffer);
-				freeArray(path);
-				return(command);
-				break;
+				if (*cmdPointer == '/')
+				{
+					free(buffer);
+					freeArray(path);
+					return (command);
+				}
 			}
+			strncpy(buffer, path[index], strlen(path[index]) + 1);
+			apndCmd(buffer, command);
+			if (stat(buffer, &fileStat) == 0)
+			{
+				free(command);
+				freeArray(path);
+				return (buffer);
+			}
+			else
+				free(buffer);
 		}
-		strncpy(buffer, path[index], strlen(path[index]) + 1);
-		bufPointer = buffer;
-		cmdPointer = command;
-		while (*bufPointer != '\0')
-			bufPointer++;
-		if (*bufPointer == '\0')
+		freeArray(path);
+		if (buffer)
 		{
-			*bufPointer = '/';
-			bufPointer++;
-		}
-		while (*cmdPointer != '\0')
-		{
-			*bufPointer = *cmdPointer;
-			cmdPointer++;
-			bufPointer++;
-		}
-		*bufPointer = '\0';
-		if (stat(buffer, &fileStat) == 0)
-		{
+			printf("hsh: %i: %s: not found\n", globals.count, command);
 			free(command);
-			freeArray(path);
-			return (buffer);
-			break;
+			return (NULL);
 		}
 	}
-	free(buffer);
 	return (NULL);
+}
+
+
+void apndCmd(char *buffer, char *cmd)
+{
+	char *bufPointer, *cmdPointer;
+
+	bufPointer = buffer;
+	cmdPointer = cmd;
+	while (*bufPointer != '\0')
+		bufPointer++;
+	if (*bufPointer == '\0')
+	{
+		*bufPointer = '/';
+		bufPointer++;
+	}
+	while (*cmdPointer != '\0')
+	{
+		*bufPointer = *cmdPointer;
+		cmdPointer++;
+		bufPointer++;
+	}
+	*bufPointer = '\0';
 }
