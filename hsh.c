@@ -33,6 +33,7 @@ int main(int argc, char *argv[], char *envp[])
 		array = vect(buffer, charCount);
 		path = pathFind(envp);
 		pathExec = execPath(path, array[0]);
+		envBuilt(array[0], envp);
 		cd(array[0], array[1]);
 		if (builtins(array[0]))
 		{
@@ -41,9 +42,12 @@ int main(int argc, char *argv[], char *envp[])
 			freeArray(array);
 		}
 		else
+		{
+			free(pathExec);
 			freeArray(array);
-		free(pathExec);
+		}
 		globals.count++;
+		free(pathExec);
 	}
 	if (charCount < 0 && flags.interactive)
 		write(STDERR_FILENO, "\n", 1);
@@ -84,8 +88,10 @@ void newProcess(char *pathExec, char **args, char **env)
  */
 int builtins(char *cmd)
 {
-	char *built[2] = {
+	char *built[4] = {
 		"cd",
+		".",
+		"env",
 		NULL
 	};
 	int index;
@@ -96,4 +102,25 @@ int builtins(char *cmd)
 			return (0);
 	}
 	return (1);
+}
+/**
+ * envBuilt - Built-in: env
+ * @env: Takes in env from main
+ *
+ * Return: void
+ */
+void envBuilt(char *cmd, char **env)
+{
+	char *envp = "env";
+	int index = 0;
+
+	if (strcmp(cmd, envp) == 0)
+	{
+		while (env[index] != NULL)
+		{
+			write(1, env[index], strlen(env[index]));
+			write(1, "\n", 1);
+			index++;
+		}
+	}
 }

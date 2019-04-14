@@ -19,57 +19,61 @@ char *pathFind(char **env)
 	return (NULL);
 }
 
+/**
+ * execPath - Creates full executable path for execve
+ * @PATH: Full path from main
+ * @cmd: Command to be added to path
+ *
+ * Return: Executable path for execve
+ */
 char *execPath(char *PATH, char *cmd)
 {
 	char **path;
-	char *cmdPointer, *buffer, *command;
-	int index;
-	struct stat fileStat;
+	char *buffer = NULL, *command, *cmdPointer;
 
+	command = malloc(sizeof(char) * strlen(cmd) + 1);
+	if (command == NULL)
+		return (NULL);
+	strcpy(command, cmd);
+	cmdPointer = command;
+        for (; *cmdPointer != '\0'; cmdPointer++)
+	{
+		if (*cmdPointer == '/')
+		{
+			return (command);
+		}
+
+	}
 	if (builtins(cmd))
 	{
 		path = vect(PATH, strlen(PATH) + 1);
-		command = malloc(sizeof(char) * strlen(cmd) + 1);
-		strcpy(command, cmd);
-
-		for (index = 1; path[index] != NULL; index++)
-		{
-			cmdPointer = command;
-			buffer = malloc(strlen(path[index]) + strlen(cmd) + 2);
-			if (buffer == NULL)
-				return (NULL);
-			for (; *cmdPointer != '\0'; cmdPointer++)
-			{
-				if (*cmdPointer == '/')
-				{
-					free(buffer);
-					freeArray(path);
-					return (command);
-				}
-			}
-			strncpy(buffer, path[index], strlen(path[index]) + 1);
-			apndCmd(buffer, command);
-			if (stat(buffer, &fileStat) == 0)
-			{
-				free(command);
-				freeArray(path);
-				return (buffer);
-			}
-			else
-				free(buffer);
-		}
-		freeArray(path);
-		if (buffer)
+		buffer = createPath(path, buffer, command);
+		if (!buffer)
 		{
 			printf("hsh: %i: %s: not found\n", globals.count, command);
+			freeArray(path);
+			free(buffer);
 			free(command);
 			return (NULL);
 		}
+		else
+		{
+			free(command);
+			return (buffer);
+		}
+		free(command);
 	}
+	free(command);
 	return (NULL);
 }
 
-
+/**
+ * apndCmd - appends cmd to the path
+ * @buffer: Buffer where the path string is
+ * @cmd: Command to be appended to path
+ *
+ * Return: void
+ */
 void apndCmd(char *buffer, char *cmd)
 {
 	char *bufPointer, *cmdPointer;
@@ -90,4 +94,35 @@ void apndCmd(char *buffer, char *cmd)
 		bufPointer++;
 	}
 	*bufPointer = '\0';
+}
+
+
+/**
+ * createPath - creates the exec path
+ * @path: Array of all possible paths
+ * @buffer: Buffer to change
+ * @cmd: command
+ *
+ * Return: void
+ */
+char *createPath(char **path, char *buffer, char *cmd)
+{
+	int index;
+	struct stat fileStat;
+
+	for (index = 1; path[index] != NULL; index++)
+	{
+		buffer = malloc(strlen(path[index]) + strlen(cmd) + 2);
+		if (buffer == NULL)
+			return (NULL);
+		strncpy(buffer, path[index], strlen(path[index]) + 1);
+		apndCmd(buffer, cmd);
+		if (stat(buffer, &fileStat) == 0)
+		{
+			freeArray(path);
+			return (buffer);
+		}
+		free(buffer);
+	}
+	return (NULL);
 }
