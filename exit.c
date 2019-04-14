@@ -10,7 +10,7 @@ void exitShell(char *buffer)
 {
 	char *ex = "exit";
 
-	if (strcmp(buffer, ex) == 0)
+	if (_strcmp(buffer, ex) == 0)
 	{
 		free(buffer);
 		exit(2);

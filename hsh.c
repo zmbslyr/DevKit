@@ -92,7 +92,7 @@ int builtins(char *cmd)
 
 	for (index = 0; built[index] != NULL; index++)
 	{
-		if (cmd == NULL || strcmp(cmd, built[index]) == 0)
+		if (cmd == NULL || _strcmp(cmd, built[index]) == 0)
 			return (0);
 	}
 	return (1);

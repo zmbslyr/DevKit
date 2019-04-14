@@ -13,7 +13,8 @@ char *pathFind(char **env)
 
 	for (index = 0; env[index] != NULL; index++)
 	{
-		if (strncmp(env[index], path, 5) == 0)
+		/* Make strncmp */
+		if (_strncmp(env[index], path, 5) == 0)
 			return (env[index]);
 	}
 	return (NULL);
@@ -28,14 +29,13 @@ char *execPath(char *PATH, char *cmd)
 
 	if (builtins(cmd))
 	{
-		path = vect(PATH, strlen(PATH) + 1);
-		command = malloc(sizeof(char) * strlen(cmd) + 1);
-		strcpy(command, cmd);
-
+		path = vect(PATH, _strlen(PATH) + 1);
+		command = malloc(sizeof(char) * _strlen(cmd) + 1);
+		_strcpy(command, cmd);
 		for (index = 1; path[index] != NULL; index++)
 		{
 			cmdPointer = command;
-			buffer = malloc(strlen(path[index]) + strlen(cmd) + 2);
+			buffer = malloc(_strlen(path[index]) + _strlen(cmd) + 2);
 			if (buffer == NULL)
 				return (NULL);
 			for (; *cmdPointer != '\0'; cmdPointer++)
@@ -47,8 +47,9 @@ char *execPath(char *PATH, char *cmd)
 					return (command);
 				}
 			}
-			strncpy(buffer, path[index], strlen(path[index]) + 1);
+			_strncpy(buffer, path[index], _strlen(path[index]) + 1);
 			apndCmd(buffer, command);
+
 			if (stat(buffer, &fileStat) == 0)
 			{
 				free(command);
@@ -61,6 +62,7 @@ char *execPath(char *PATH, char *cmd)
 		freeArray(path);
 		if (buffer)
 		{
+			/* Replace with write  */
 			printf("hsh: %i: %s: not found\n", globals.count, command);
 			free(command);
 			return (NULL);
