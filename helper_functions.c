@@ -1,5 +1,4 @@
 #include "shell.h"
-
 /**
  * _strlen - get the length of a string
  * @s:  pointer to beginning of string
@@ -9,27 +8,9 @@ int _strlen(char *s)
 {
 	int i;
 
-	for (i = 0; *s != '\0'; i++)
-	{
-		s++;
-	}
+	for (i = 0; s[i] != '\0'; i++)
+		;
 	return (i);
-}
-
-/**
- * strlen_const - length of constant string
- * @string: pointer to find the length
- * Return: length of string
- **/
-unsigned int strlen_const(const char *string)
-{
-	unsigned int n;
-
-	while (*string)
-	{
-		string++;
-	}
-	return (n);
 }
 
 
@@ -37,25 +18,19 @@ unsigned int strlen_const(const char *string)
  * _strcpy - copy string
  * @dest: destination pointer
  * @src: source
- * @n: number bytes
  * Return: returns char ptr
  **/
 
-char *_strcpy(char *dest, char *src, int n)
+char *_strcpy(char *dest, char *src)
 {
 	int index = 0;
 
-	while (index < n && src[index] != '\0')
+	while (src[index] != '\0')
 	{
-		index++;
 		dest[index] = src[index];
-	}
-
-	while (index < n)
-	{
 		index++;
-		dest[index] = '\0';
 	}
+	dest[index] = '\0';
 
 	return (dest);
 }
@@ -69,16 +44,19 @@ char *_strcpy(char *dest, char *src, int n)
  **/
 int _strcmp(char *s1, char *s2)
 {
-	while (*s1 == *s2 && (*s1 != '\0' && *s2 != '\0'))
+	unsigned int i = 0;
+
+	while (s1[i])
 	{
-		s1++;
-		s2++;
+		if (s1[i] != s2[i])
+			return (1);
+		i++;
 	}
-	return (1);
+	return (0);
 }
 
 /**
-* _strncpy - compies one string to another string in memory
+* _strncpy - compares one string to another string in memory
 * @dest: destination of string to copy from
 * @src: string to copy
 * @n: length of the copied string
@@ -86,18 +64,39 @@ int _strcmp(char *s1, char *s2)
 **/
 char *_strncpy(char *dest, char *src, int n)
 {
-	int i = 0;
+	int index = 0;
 
-	while (i < n && *src != '\0')
+	while (index < n && src[index] != '\0')
 	{
-		*dest = *src;
-		i++;
+		dest[index] = src[index];
+		index++;
 	}
 
-	while (i < n)
+	while (index < n)
 	{
-		*dest = '\0';
-		i++;
+		dest[index] = '\0';
+		index++;
 	}
 	return (dest);
 }
+
+/**
+* _strncmp - compare strings to certaint number of bytes
+* @s1: first string
+* @s2: second string
+* @n: number of bytes
+* Return: return 0
+**/
+int _strncmp(char *s1, char *s2, size_t n)
+{
+	size_t i = 0;
+
+	while (i < n)
+	{
+		if (s1[i] != s2[i])
+			return (-1);
+		i++;
+	}
+	return (0);
+}
+/* mo was here */
