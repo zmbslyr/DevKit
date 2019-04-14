@@ -24,7 +24,7 @@ int builtins(char *cmd);
 void cd(char *cmd, char *path);
 void exitShell(char *buffer);
 void envBuilt(char *cmd, char **env);
-
+void envBuilt(char *cmd, char **env);
 
 /* helper_functions */
 int _strlen(char *s);
