@@ -11,7 +11,7 @@ void cd(char *cmd, char *path)
 	char *cd = "cd";
 	int fd;
 
-	if (cmd == NULL || strcmp(cmd, cd) == 0)
+	if (cmd == NULL || _strcmp(cmd, cd) == 0)
 	{
 		if (cmd == NULL)
 			return;

@@ -13,7 +13,8 @@ char *pathFind(char **env)
 
 	for (index = 0; env[index] != NULL; index++)
 	{
-		if (strncmp(env[index], path, 5) == 0)
+		/* Make strncmp */
+		if (_strncmp(env[index], path, 5) == 0)
 			return (env[index]);
 	}
 	return (NULL);
@@ -47,6 +48,7 @@ char *execPath(char *PATH, char *cmd)
 		buffer = createPath(path, buffer, command);
 		if (!buffer)
 		{
+			/* Replace with write  */
 			printf("hsh: %i: %s: not found\n", globals.count, command);
 			freeArray(path);
 			free(buffer);

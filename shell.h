@@ -24,6 +24,15 @@ void cd(char *cmd, char *path);
 void exitShell(char *buffer);
 
 
+/* helper_functions */
+int _strlen(char *s);
+int _strcmp(char *s1, char *s2);
+char *_strncpy(char *dest, char *src, int n);
+char *_strcpy(char *dest, char *src);
+int _strncmp(char *s1, char *s2, size_t n);
+int _putchar(char c);
+
+
 /* GLOBALS */
 /**
  * global - stuff
