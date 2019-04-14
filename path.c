@@ -39,10 +39,7 @@ char *execPath(char *PATH, char *cmd)
         for (; *cmdPointer != '\0'; cmdPointer++)
 	{
 		if (*cmdPointer == '/')
-		{
 			return (command);
-		}
-
 	}
 	if (builtins(cmd))
 	{
