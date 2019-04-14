@@ -13,7 +13,8 @@ char *pathFind(char **env)
 
 	for (index = 0; env[index] != NULL; index++)
 	{
-		if (strncmp(env[index], path, 5) == 0)
+		/* Make strncmp */
+		if (_strncmp(env[index], path, 5) == 0)
 			return (env[index]);
 	}
 	return (NULL);
@@ -37,16 +38,15 @@ char *execPath(char *PATH, char *cmd)
 	strcpy(command, cmd);
 	cmdPointer = command;
         for (; *cmdPointer != '\0'; cmdPointer++)
-	{
 		if (*cmdPointer == '/')
 			return (command);
-	}
 	if (builtins(cmd))
 	{
 		path = vect(PATH, strlen(PATH) + 1);
 		buffer = createPath(path, buffer, command);
 		if (!buffer)
 		{
+			/* Replace with write  */
 			printf("hsh: %i: %s: not found\n", globals.count, command);
 			freeArray(path);
 			free(buffer);

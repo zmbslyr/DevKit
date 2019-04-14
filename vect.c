@@ -18,7 +18,7 @@ char **vect(char *str, ssize_t n)
 	if (buffer == NULL)
 		return (NULL);
 	bufPointer = buffer;
-	strcpy(buffer, str);
+	_strcpy(buffer, str);
 	for (argc = 0; *bufPointer != '\0'; bufPointer++)
 	{
 		for (index = 0; delim[index] != '\0'; index++)
@@ -31,8 +31,8 @@ char **vect(char *str, ssize_t n)
 	token = strtok(buffer, delim);
 	while (token != NULL)
 	{
-		args[argc] = malloc(strlen(token) + 1);
-		strcpy(args[argc], token);
+		args[argc] = malloc(_strlen(token) + 1);
+		_strcpy(args[argc], token);
 		token = strtok(NULL, delim);
 		argc++;
 	}
