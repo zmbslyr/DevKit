@@ -8,15 +8,14 @@
  *
  * Return: 0
  */
-int main(int argc, char *argv[], char *envp[])
+int main(int argc __attribute__((unused)), char *argv[], char *envp[])
 {
 	char *buffer = NULL, *path, *pathExec;
 	size_t bufSize = 0;
 	ssize_t charCount;
 	char **array;
 
-	if (argc < 1 || argv == NULL)
-		return (-1);
+	signal(SIGINT, sigHandle);
 	globals.count = 1;
 	if (isatty(STDOUT_FILENO) == 1 && isatty(STDIN_FILENO) == 1)
 		flags.interactive = 1;
@@ -114,11 +113,11 @@ void envBuilt(char *cmd, char **env)
 	char *envp = "env";
 	int index = 0;
 
-	if (strcmp(cmd, envp) == 0)
+	if (_strcmp(cmd, envp) == 0)
 	{
 		while (env[index] != NULL)
 		{
-			write(1, env[index], strlen(env[index]));
+			write(1, env[index], _strlen(env[index]));
 			write(1, "\n", 1);
 			index++;
 		}

@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <stdbool.h>
+#include <signal.h>
 
 /* Base Functions */
 char **vect(char *str, ssize_t n);
@@ -18,6 +19,7 @@ char *execPath(char *PATH, char *cmd);
 void newProcess(char *pathExec, char **args, char **env);
 void apndCmd(char *buffer, char *cmd);
 char *createPath(char **path, char *buffer, char *cmd);
+void sigHandle(int n);
 
 /* Built-ins */
 int builtins(char *cmd);

@@ -27,3 +27,14 @@ void cd(char *cmd, char *path)
 		}
 	}
 }
+
+/**
+ * sigHandle - handles signal for control c
+ * @n: Integer
+ *
+ * Return: void
+ */
+void sigHandle(int n __attribute__((unused)))
+{
+	write(STDERR_FILENO, "\n($) ", 5);
+}
