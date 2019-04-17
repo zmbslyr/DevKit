@@ -8,19 +8,17 @@
  *
  * Return: 0
  */
-int main(int argc, char *argv[], char *envp[])
+int main(int argc __attribute__((unused)),
+	 char *argv[],
+	 char *envp[])
 {
-	char *buffer = NULL, *path, *pathExec;
+	char *buffer = NULL, *path, *pathExec, *delim1 = "\t ";
 	size_t bufSize = 0;
 	ssize_t charCount;
-	char **array;
+	char **array = NULL;
 
-	if (argc < 1 || argv == NULL)
-		return (-1);
-	globals.count = 1;
-	if (isatty(STDOUT_FILENO) == 1 && isatty(STDIN_FILENO) == 1)
-		flags.interactive = 1;
-	while (1)
+	startup(argv);
+	for (globals.count = 1; 1; globals.count++)
 	{
 		if (flags.interactive)
 			write(STDERR_FILENO, "($) ", 4);
@@ -30,11 +28,11 @@ int main(int argc, char *argv[], char *envp[])
 		if (buffer[charCount - 1] == '\n')
 			buffer[charCount - 1] = '\0';
 		exitShell(buffer);
-		array = vect(buffer, charCount);
+		array = vect(buffer, delim1,  charCount);
+		globals.cmd = array[0];
 		path = pathFind(envp);
 		pathExec = execPath(path, array[0]);
-		envBuilt(array[0], envp);
-		cd(array[0], array[1]);
+		parse(array, envp);
 		if (builtins(array[0]))
 		{
 			if (pathExec != NULL)
@@ -46,13 +44,12 @@ int main(int argc, char *argv[], char *envp[])
 			free(pathExec);
 			freeArray(array);
 		}
-		globals.count++;
 		free(pathExec);
 	}
 	if (charCount < 0 && flags.interactive)
 		write(STDERR_FILENO, "\n", 1);
 	free(buffer);
-	return (0);
+	return (globals.exit);
 }
 
 /**
@@ -66,7 +63,6 @@ int main(int argc, char *argv[], char *envp[])
 void newProcess(char *pathExec, char **args, char **env)
 {
 	pid_t newProcess;
-	int status;
 
 	newProcess = fork();
 	if (newProcess < 0)
@@ -74,11 +70,14 @@ void newProcess(char *pathExec, char **args, char **env)
 	if (newProcess == 0)
 	{
 		execve(pathExec, args, env);
-		perror(args[0]);
-		exit(2);
+		nfError(errno);
+		exit(globals.exit);
 	}
 	else
-		wait(&status);
+	{
+		wait(&globals.exit);
+		globals.exit = WEXITSTATUS(globals.exit);
+	}
 }
 /**
  * builtins - checks if cmd is a built-in
@@ -105,6 +104,7 @@ int builtins(char *cmd)
 }
 /**
  * envBuilt - Built-in: env
+ * @cmd: Command to check against env
  * @env: Takes in env from main
  *
  * Return: void
@@ -114,13 +114,27 @@ void envBuilt(char *cmd, char **env)
 	char *envp = "env";
 	int index = 0;
 
-	if (strcmp(cmd, envp) == 0)
+	if (_strcmp(cmd, envp) == 0)
 	{
 		while (env[index] != NULL)
 		{
-			write(1, env[index], strlen(env[index]));
+			write(1, env[index], _strlen(env[index]));
 			write(1, "\n", 1);
 			index++;
 		}
 	}
+}
+
+/**
+ * parse - parses a string
+ * @array: Token array
+ * @env: Enviroment
+ *
+ * Return: void
+ */
+void parse(char **array, char **env)
+{
+	globals.arg = array[1];
+	envBuilt(array[0], env);
+	cd(array[0], array[1]);
 }

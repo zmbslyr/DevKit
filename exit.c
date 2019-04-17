@@ -1,7 +1,7 @@
 #include "shell.h"
 
 /**
- * exit - exits the shell
+ * exitShell - exits the shell
  * @buffer: buffer to clean up
  *
  * Return: void
@@ -13,6 +13,6 @@ void exitShell(char *buffer)
 	if (_strcmp(buffer, ex) == 0)
 	{
 		free(buffer);
-		exit(2);
+		exit(globals.exit);
 	}
 }

@@ -7,9 +7,9 @@
  *
  * Return: Pointer to an array of pointers
  */
-char **vect(char *str, ssize_t n)
+char **vect(char *str, char *delim,  ssize_t n)
 {
-	char *buffer, *bufPointer, *token, *delim = " :=";
+	char *buffer, *bufPointer, *token;
 	char **args;
 	size_t tokenSize = 1;
 	int argc = 0, index;
@@ -28,6 +28,8 @@ char **vect(char *str, ssize_t n)
 		}
 	}
 	args = malloc(sizeof(char *) * (tokenSize + 1));
+	if (args == NULL)
+		return (NULL);
 	token = strtok(buffer, delim);
 	while (token != NULL)
 	{

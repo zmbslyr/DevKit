@@ -1,0 +1,11 @@
+#include "shell.h"
+
+int main(void)
+{
+	globals.count = 9;
+	if (globals.count > 9)
+		_putchar((globals.count / 10) + '0');
+	_putchar((globals.count % 10) + '0');
+	_putchar('\n');
+	return (0);
+}
