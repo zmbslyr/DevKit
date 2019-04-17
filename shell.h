@@ -46,6 +46,7 @@ int _putchar(char c);
 /**
  * struct global - GLobal values
  * @count: global line count
+ * @exit: Global exit status
  * @name: Program name
  * @cmd: Command
  * @arg: First argument
@@ -55,6 +56,7 @@ int _putchar(char c);
 struct global
 {
 	int count;
+	int exit;
 	char *name;
 	char *cmd;
 	char *arg;

@@ -53,7 +53,7 @@ int main(int argc __attribute__((unused)),
 	if (charCount < 0 && flags.interactive)
 		write(STDERR_FILENO, "\n", 1);
 	free(buffer);
-	return (0);
+	return (globals.exit);
 }
 
 /**
