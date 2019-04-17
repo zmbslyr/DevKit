@@ -45,7 +45,6 @@ char *execPath(char *PATH, char *cmd)
 		buffer = createPath(path, buffer, command);
 		if (!buffer)
 		{
-			nfError(-1);
 			freeArray(path);
 			free(buffer);
 			free(command);
@@ -114,12 +113,12 @@ char *createPath(char **path, char *buffer, char *cmd)
 		apndCmd(buffer, cmd);
 		if (stat(buffer, &fileStat) == 0)
 		{
+			globals.error = errno;
 			freeArray(path);
 			return (buffer);
 		}
-		else if (stat(buffer, &fileStat) == 0)
-			nfError(-1);
 		free(buffer);
 	}
+	nfError(globals.error);
 	return (NULL);
 }

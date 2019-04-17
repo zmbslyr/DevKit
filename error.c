@@ -8,7 +8,7 @@
  */
 void error(int status)
 {
-	if (status < 0)
+	if (status == ENOTDIR)
 	{
 		write(STDERR_FILENO, globals.name, _strlen(globals.name));
 		write(STDERR_FILENO, ": ", 2);
@@ -17,24 +17,39 @@ void error(int status)
 		_putchar((globals.count % 10) + '0');
 		write(STDERR_FILENO, ": ", 2);
 		perror(globals.cmd);
+		globals.exit = 127;
 	}
 }
 
-int nfError(int status)
+void nfError(int status)
 {
-	if (status < 0)
+	if (status == ENOENT || status == ENOTDIR)
 	{
-		write(STDERR_FILENO, globals.name, _strlen(globals.name));
-		write(STDERR_FILENO, ": ", 2);
-		if (globals.count > 9 && globals.count < 100)
-			_putchar((globals.count / 10) + '0');
-		_putchar((globals.count % 10) + '0');
-		write(STDERR_FILENO, ": ", 2);
-		write(STDERR_FILENO, globals.cmd, _strlen(globals.cmd));
-		write(STDERR_FILENO, ": not found\n", 12);
-		return (127);
+		if (status == ENOENT)
+		{
+			globals.exit = 127;
+			write(STDERR_FILENO, globals.name, _strlen(globals.name));
+			write(STDERR_FILENO, ": ", 2);
+			if (globals.count > 9 && globals.count < 100)
+				_putchar((globals.count / 10) + '0');
+			_putchar((globals.count % 10) + '0');
+			write(STDERR_FILENO, ": ", 2);
+			write(STDERR_FILENO, globals.cmd, _strlen(globals.cmd));
+			write(STDERR_FILENO, ": not found\n", 12);
+		}
+		else
+		{
+			globals.exit = 2;
+			write(STDERR_FILENO, globals.name, _strlen(globals.name));
+			write(STDERR_FILENO, ": ", 2);
+			if (globals.count > 9 && globals.count < 100)
+				_putchar((globals.count / 10) + '0');
+			_putchar((globals.count % 10) + '0');
+			write(STDERR_FILENO, ": ", 2);
+			write(STDERR_FILENO, globals.cmd, _strlen(globals.cmd));
+			write(STDERR_FILENO, ": not found\n", 12);
+		}
 	}
-	return (127);
 }
 
 void cdError(int status)

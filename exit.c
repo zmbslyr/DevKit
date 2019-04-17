@@ -13,6 +13,6 @@ void exitShell(char *buffer)
 	if (_strcmp(buffer, ex) == 0)
 	{
 		free(buffer);
-		exit(0);
+		exit(globals.exit);
 	}
 }
