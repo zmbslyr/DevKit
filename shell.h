@@ -9,9 +9,10 @@
 #include <errno.h>
 #include <stdbool.h>
 #include <signal.h>
+#include <errno.h>
 
 /* Base Functions */
-char **vect(char *str, ssize_t n);
+char **vect(char *str, char *delim, ssize_t n);
 char *argToString(char **args);
 void freeArray(char **arr);
 char *pathFind(char **env);
@@ -20,6 +21,10 @@ void newProcess(char *pathExec, char **args, char **env);
 void apndCmd(char *buffer, char *cmd);
 char *createPath(char **path, char *buffer, char *cmd);
 void sigHandle(int n);
+void parse(char **array, char **env);
+void error(int status);
+int nfError(int status);
+void cdError(int status);
 
 /* Built-ins */
 int builtins(char *cmd);
@@ -39,21 +44,27 @@ int _putchar(char c);
 
 /* GLOBALS */
 /**
- * global - stuff
+ * struct global - GLobal values
  * @count: global line count
+ * @name: Program name
+ * @cmd: Command
+ * @arg: First argument
  *
- * Definition: something
+ * Description: Keeps track of global values
  */
 struct global
 {
 	int count;
+	char *name;
+	char *cmd;
+	char *arg;
 } globals;
 
 /**
- * flag - flags for the system
+ * struct flag - flags for the system
  * @interactive: checks for interactive mode
  *
- * Definition: Flags for the system
+ * Description: Flags for the system
  */
 struct flag
 {

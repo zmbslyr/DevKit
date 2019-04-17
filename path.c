@@ -29,23 +29,23 @@ char *pathFind(char **env)
 char *execPath(char *PATH, char *cmd)
 {
 	char **path;
-	char *buffer = NULL, *command, *cmdPointer;
+	char *buffer = NULL, *command, *cmdPointer, *delim = ":=";
 
 	command = malloc(sizeof(char) * _strlen(cmd) + 1);
 	if (command == NULL)
 		return (NULL);
 	_strcpy(command, cmd);
 	cmdPointer = command;
-        for (; *cmdPointer != '\0'; cmdPointer++)
+	for (; *cmdPointer != '\0'; cmdPointer++)
 		if (*cmdPointer == '/')
 			return (command);
 	if (builtins(cmd))
 	{
-		path = vect(PATH, _strlen(PATH) + 1);
+		path = vect(PATH, delim,  _strlen(PATH) + 1);
 		buffer = createPath(path, buffer, command);
 		if (!buffer)
 		{
-			printf("hsh: %i: %s: not found\n", globals.count, command);
+			nfError(-1);
 			freeArray(path);
 			free(buffer);
 			free(command);
@@ -117,6 +117,8 @@ char *createPath(char **path, char *buffer, char *cmd)
 			freeArray(path);
 			return (buffer);
 		}
+		else if (stat(buffer, &fileStat) == 0)
+			nfError(-1);
 		free(buffer);
 	}
 	return (NULL);

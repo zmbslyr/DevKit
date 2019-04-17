@@ -8,18 +8,21 @@
  *
  * Return: 0
  */
-int main(int argc __attribute__((unused)), char *argv[], char *envp[])
+int main(int argc __attribute__((unused)),
+	 char *argv[],
+	 char *envp[])
 {
-	char *buffer = NULL, *path, *pathExec;
+	char *buffer = NULL, *path, *pathExec, *delim1 = "\t ";
 	size_t bufSize = 0;
 	ssize_t charCount;
-	char **array;
-
+	char **array = NULL;
+	/* make startup function */
+	globals.name = argv[0];
 	signal(SIGINT, sigHandle);
-	globals.count = 1;
 	if (isatty(STDOUT_FILENO) == 1 && isatty(STDIN_FILENO) == 1)
 		flags.interactive = 1;
-	while (1)
+	/* make startup function */
+	for (globals.count = 1; 1; globals.count++)
 	{
 		if (flags.interactive)
 			write(STDERR_FILENO, "($) ", 4);
@@ -29,11 +32,11 @@ int main(int argc __attribute__((unused)), char *argv[], char *envp[])
 		if (buffer[charCount - 1] == '\n')
 			buffer[charCount - 1] = '\0';
 		exitShell(buffer);
-		array = vect(buffer, charCount);
+		array = vect(buffer, delim1,  charCount);
+		globals.cmd = array[0];
 		path = pathFind(envp);
 		pathExec = execPath(path, array[0]);
-		envBuilt(array[0], envp);
-		cd(array[0], array[1]);
+		parse(array, envp);
 		if (builtins(array[0]))
 		{
 			if (pathExec != NULL)
@@ -45,7 +48,6 @@ int main(int argc __attribute__((unused)), char *argv[], char *envp[])
 			free(pathExec);
 			freeArray(array);
 		}
-		globals.count++;
 		free(pathExec);
 	}
 	if (charCount < 0 && flags.interactive)
@@ -69,11 +71,11 @@ void newProcess(char *pathExec, char **args, char **env)
 
 	newProcess = fork();
 	if (newProcess < 0)
-		perror(args[0]);
+		nfError(-1);
 	if (newProcess == 0)
 	{
 		execve(pathExec, args, env);
-		perror(args[0]);
+		nfError(-1);
 		exit(2);
 	}
 	else
@@ -104,6 +106,7 @@ int builtins(char *cmd)
 }
 /**
  * envBuilt - Built-in: env
+ * @cmd: Command to check against env
  * @env: Takes in env from main
  *
  * Return: void
@@ -122,4 +125,18 @@ void envBuilt(char *cmd, char **env)
 			index++;
 		}
 	}
+}
+
+/**
+ * parse - parses a string
+ * @array: Token array
+ * @env: Enviroment
+ *
+ * Return: void
+ */
+void parse(char **array, char **env)
+{
+	globals.arg = array[1];
+	envBuilt(array[0], env);
+	cd(array[0], array[1]);
 }

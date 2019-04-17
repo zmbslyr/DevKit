@@ -1,7 +1,7 @@
 #include "shell.h"
 
 /**
- * exit - exits the shell
+ * exitShell - exits the shell
  * @buffer: buffer to clean up
  *
  * Return: void

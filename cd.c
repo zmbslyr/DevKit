@@ -2,7 +2,8 @@
 
 /**
  * cd - change user directory
- * @path: path to change to
+ * @cmd: Command to check against cd
+ * @path: Path to change to
  *
  * Return: void
  */
@@ -23,7 +24,7 @@ void cd(char *cmd, char *path)
 		{
 			fd = chdir(path);
 			if (fd < 0)
-				perror(cmd);
+				cdError(fd);
 		}
 	}
 }
